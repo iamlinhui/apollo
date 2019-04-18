@@ -4,5 +4,5 @@ org.springframework.context.ApplicationContextInitializer=\
 com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer
 #org.springframework.boot.env.EnvironmentPostProcessor=\
 #com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.SpringApplicationRunListener=\
 com.ctrip.framework.apollo.spring.boot.ApolloApplicationListener
