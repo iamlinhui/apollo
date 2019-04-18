@@ -11,7 +11,6 @@ import com.ctrip.framework.apollo.spring.property.ApolloAutoUpdateConfigChangeLi
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.ctrip.framework.foundation.Foundation;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -58,8 +57,6 @@ public class ApolloApplicationListener implements SpringApplicationRunListener, 
 
     private static final AtomicBoolean INITIALIZED_ENV = new AtomicBoolean(false);
 
-    private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
-
     private static final String DEFAULT_SEARCH_LOCATIONS = "classpath:/,classpath:/config/,file:./,file:./config/";
 
     private static final String DEFAULT_NAMES = "application,bootstrap,business";
@@ -94,7 +91,9 @@ public class ApolloApplicationListener implements SpringApplicationRunListener, 
         if (NAMESPACE_NAMES.isEmpty()) {
             String namespaces = Foundation.app().getProperty("app.namespace", null);
             if (!StringUtils.isBlank(namespaces)) {
-                addNamespaces(NAMESPACE_SPLITTER.splitToList(namespaces), 1);
+                addNamespaces(ImmutableSortedSet.copyOf(namespaces.split(",")), 1);
+            } else {
+                addNamespaces(ImmutableSortedSet.copyOf(DEFAULT_NAMES.split(",")), 1);
             }
         }
         if (!NAMESPACE_NAMES.isEmpty() && INITIALIZED_ENV.compareAndSet(false, true)) {
@@ -137,6 +136,7 @@ public class ApolloApplicationListener implements SpringApplicationRunListener, 
         Set<Integer> orders = ImmutableSortedSet.copyOf(NAMESPACE_NAMES.keySet());
         for (Integer order : orders) {
             for (String namespace : NAMESPACE_NAMES.get(order)) {
+                //加载远程配置
                 Config config = ConfigService.getConfig(namespace);
                 composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
             }

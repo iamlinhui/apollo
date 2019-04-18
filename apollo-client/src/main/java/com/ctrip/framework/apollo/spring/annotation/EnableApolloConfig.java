@@ -29,6 +29,7 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 @Target(ElementType.TYPE)
 @Documented
 @Import(ApolloConfigRegistrar.class)
+@Deprecated
 public @interface EnableApolloConfig {
   /**
    * Apollo namespaces to inject configuration into Spring Property Sources.
